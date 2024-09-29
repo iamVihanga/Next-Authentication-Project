@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/global/form-error";
 import { FormSuccess } from "@/components/global/form-success";
 import { login } from "@/actions/login";
+import { Loader2 } from "lucide-react";
 
 export function LoginForm() {
   const [isPending, startTransition] = useTransition();
@@ -92,6 +93,7 @@ export function LoginForm() {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Login
           </Button>
         </form>
