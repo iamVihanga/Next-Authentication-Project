@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import {
@@ -20,6 +21,7 @@ import { login } from "@/actions/login";
 import { Loader2 } from "lucide-react";
 
 export function LoginForm() {
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
@@ -30,6 +32,11 @@ export function LoginForm() {
       password: "",
     },
   });
+
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Account already used by different provider"
+      : "";
 
   const onSubmit = (values: LoginSchemaT) => {
     setError("");
@@ -90,7 +97,7 @@ export function LoginForm() {
               )}
             />
           </div>
-          <FormError message={error} />
+          <FormError message={error || urlError} />
           <FormSuccess message={success} />
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
