@@ -3,6 +3,8 @@ import { type RegisterSchemaT, RegisterSchema } from "@/schemas/index";
 import bcrypt from "bcryptjs";
 import { db } from "@/db/db";
 import { getUserByEmail } from "@/db/functions";
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export async function register(values: RegisterSchemaT) {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -31,7 +33,10 @@ export async function register(values: RegisterSchemaT) {
     },
   });
 
-  // TODO: Send verification token email
+  const verificationToken = await generateVerificationToken(email);
 
-  return { success: "User Created !" };
+  // Send verification token email
+  await sendVerificationEmail(email, verificationToken.token);
+
+  return { success: "Verification email sent!" };
 }
