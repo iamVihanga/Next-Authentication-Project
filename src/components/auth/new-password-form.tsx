@@ -12,39 +12,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { LoginSchema, type LoginSchemaT } from "@/schemas/index";
+import { NewPasswordSchema, type NewPasswordSchemaT } from "@/schemas/index";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/global/form-error";
 import { FormSuccess } from "@/components/global/form-success";
-import { login } from "@/actions/login";
+import { newPassword } from "@/actions/new-password";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
 
-export function LoginForm() {
+export function NewPasswordForm() {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
-  const form = useForm<LoginSchemaT>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<NewPasswordSchemaT>({
+    resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
-      email: "",
       password: "",
     },
   });
 
-  const urlError =
-    searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "Account already used by different provider"
-      : "";
+  const token = searchParams.get("token");
 
-  const onSubmit = (values: LoginSchemaT) => {
+  const onSubmit = (values: NewPasswordSchemaT) => {
     setError("");
     setSuccess("");
 
     startTransition(() => {
-      login(values).then((data) => {
+      newPassword(values, token).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
       });
@@ -53,32 +48,13 @@ export function LoginForm() {
 
   return (
     <CardWrapper
-      headerLabel="Welcome Back"
-      backButtonLabel="Don't have an account ?"
-      backButtonHref="/auth/register"
-      showSocial
+      headerLabel="Enter a new password"
+      backButtonLabel="Back to login"
+      backButtonHref="/auth/login"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="john.doe@example.com"
-                      disabled={isPending}
-                      type="email"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="password"
@@ -89,28 +65,20 @@ export function LoginForm() {
                     <Input
                       {...field}
                       placeholder="******"
-                      type="password"
                       disabled={isPending}
+                      type="password"
                     />
                   </FormControl>
-                  <Button
-                    asChild
-                    size={"sm"}
-                    variant={"link"}
-                    className="px-0 font-normal"
-                  >
-                    <Link href={"/auth/reset"}>Forgot Password?</Link>
-                  </Button>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          <FormError message={error || urlError} />
+          <FormError message={error} />
           <FormSuccess message={success} />
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Login
+            Reset Password
           </Button>
         </form>
       </Form>

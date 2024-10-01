@@ -26,3 +26,21 @@ export const RegisterSchema = z.object({
 });
 
 export type RegisterSchemaT = z.infer<typeof RegisterSchema>;
+
+// Reset schema
+export const ResetSchema = z.object({
+  email: z.string().email({
+    message: "Email is required",
+  }),
+});
+
+export type ResetSchemaT = z.infer<typeof ResetSchema>;
+
+// New Password schema
+export const NewPasswordSchema = z.object({
+  password: z.string().min(6, {
+    message: "Minimum 6 characters required",
+  }),
+});
+
+export type NewPasswordSchemaT = z.infer<typeof NewPasswordSchema>;

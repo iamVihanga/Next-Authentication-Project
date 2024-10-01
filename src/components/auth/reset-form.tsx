@@ -1,7 +1,6 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import {
@@ -12,39 +11,31 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { LoginSchema, type LoginSchemaT } from "@/schemas/index";
+import { ResetSchema, type ResetSchemaT } from "@/schemas/index";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/global/form-error";
 import { FormSuccess } from "@/components/global/form-success";
-import { login } from "@/actions/login";
+import { resetPassword } from "@/actions/reset-password";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
 
-export function LoginForm() {
-  const searchParams = useSearchParams();
+export function ResetForm() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
-  const form = useForm<LoginSchemaT>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<ResetSchemaT>({
+    resolver: zodResolver(ResetSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const urlError =
-    searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "Account already used by different provider"
-      : "";
-
-  const onSubmit = (values: LoginSchemaT) => {
+  const onSubmit = (values: ResetSchemaT) => {
     setError("");
     setSuccess("");
 
     startTransition(() => {
-      login(values).then((data) => {
+      resetPassword(values).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
       });
@@ -53,10 +44,9 @@ export function LoginForm() {
 
   return (
     <CardWrapper
-      headerLabel="Welcome Back"
-      backButtonLabel="Don't have an account ?"
-      backButtonHref="/auth/register"
-      showSocial
+      headerLabel="Forgot your password"
+      backButtonLabel="Back to login"
+      backButtonHref="/auth/login"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -79,38 +69,12 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="******"
-                      type="password"
-                      disabled={isPending}
-                    />
-                  </FormControl>
-                  <Button
-                    asChild
-                    size={"sm"}
-                    variant={"link"}
-                    className="px-0 font-normal"
-                  >
-                    <Link href={"/auth/reset"}>Forgot Password?</Link>
-                  </Button>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
-          <FormError message={error || urlError} />
+          <FormError message={error} />
           <FormSuccess message={success} />
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Login
+            Send reset email
           </Button>
         </form>
       </Form>
