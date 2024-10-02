@@ -1,16 +1,10 @@
 "use client";
-import { LogoutButton } from "@/components/auth/logout-button";
+
+import { UserInfo } from "@/components/global/user-info";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
-export default function SettingsPage() {
+export default function ClientPage() {
   const user = useCurrentUser();
 
-  return (
-    <div className="">
-      <p>Settings Page</p>
-      <p>{JSON.stringify(user)}</p>
-
-      <LogoutButton />
-    </div>
-  );
+  return <UserInfo user={user} label="Client Component" />;
 }
