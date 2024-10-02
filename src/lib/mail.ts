@@ -31,3 +31,15 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     `,
   });
 }
+
+export async function sendTwoFactorTokenEmail(email: string, token: string) {
+  await resend.emails.send({
+    from: "Acme <onboarding@resend.dev>",
+    to: email,
+    subject: "2FA Code",
+    html: `
+            <h1>Two-factor authentication</h1>
+            <p>Your two-factor authentication code is: <strong>${token}</strong></p>
+        `,
+  });
+}
