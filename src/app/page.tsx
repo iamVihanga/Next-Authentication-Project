@@ -9,10 +9,16 @@ export default function Home() {
           Auth
         </h1>
         <p className="text-white text-lg">A Simple authentication service</p>
-        <div className="">
+        <div className="flex items-center gap-x-3">
           <LoginButton>
             <Button variant={"secondary"} size={"lg"}>
               Sign in
+            </Button>
+          </LoginButton>
+
+          <LoginButton mode="modal" asChild>
+            <Button variant={"secondary"} size={"lg"}>
+              Sign in (Modal)
             </Button>
           </LoginButton>
         </div>
