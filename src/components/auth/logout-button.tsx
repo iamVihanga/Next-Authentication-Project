@@ -10,6 +10,7 @@ export function LogoutButton() {
 
   return (
     <Button
+      type="button"
       onClick={() => {
         startTransition(() => {
           logout();
